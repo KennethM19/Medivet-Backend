@@ -1,7 +1,17 @@
 from fastapi import FastAPI
+from database import Base, engine
+import models
+from routers import sintomas, predicciones, usuarios, mascotas
 
-app = FastAPI()
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(title="Medivet Backend")
+
+app.include_router(predicciones.router)
+app.include_router(sintomas.router)
+app.include_router(usuarios.router)
+app.include_router(mascotas.router)
 
 @app.get("/")
-def home():
-    return {"message": "Hello World"}
+def root():
+    return {"mensaje": "API funcionando 🚀"}
