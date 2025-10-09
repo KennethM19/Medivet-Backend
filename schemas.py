@@ -1,0 +1,58 @@
+from datetime import date
+from typing import Optional
+
+from pydantic import BaseModel, EmailStr
+
+class RoleBase(BaseModel):
+    name: str
+
+class RoleCreate(RoleBase):
+    pass
+
+class RoleRead(RoleBase):
+    id: int
+    class Config:
+        orm_mode = True
+
+class TypeDocumentBase(BaseModel):
+    name: str
+
+class TypeDocumentCreate(TypeDocumentBase):
+    pass
+
+class TypeDocumentRead(TypeDocumentBase):
+    id: int
+    class Config:
+        orm_mode = True
+
+class UserBase(BaseModel):
+    tipo_document_id: int
+    num_document: str
+    name: str
+    lastname: str
+    birth_date: date
+    address: str
+    num_cellphone: Optional[str] = None
+    num_telephone: Optional[str] = None
+    email: EmailStr
+    role_id: int
+
+class UserCreate(UserBase):
+    password: str
+
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    lastname: Optional[str] = None
+    address: Optional[str] = None
+    num_cellphone: Optional[str] = None
+    num_telephone: Optional[str] = None
+    role_id: Optional[int] = None
+    password: Optional[str] = None
+
+class UserResponse(UserBase):
+    id: int
+    type_document: TypeDocumentRead
+    role: RoleRead
+
+    class Config:
+        orm_mode = True
