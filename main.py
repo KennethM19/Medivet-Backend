@@ -1,13 +1,14 @@
 from fastapi import FastAPI
 
 from database import engine, Base
-from routers import users, auth
+from routers import users, auth, roles
 
 Base.metadata.create_all(bind=engine)
 app = FastAPI(title="Medivet Backend")
 
 app.include_router(auth.router)
 app.include_router(users.router)
+app.include_router(roles.router)
 
 @app.get("/")
 def home():

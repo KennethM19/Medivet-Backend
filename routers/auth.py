@@ -11,7 +11,7 @@ from database import get_db
 from schemas import TokenResponse, LoginRequest
 from utils.security import verify_password, create_token
 
-router = APIRouter(prefix="/auth", tags=["auth"])
+router = APIRouter(prefix="/auth", tags=["Auth"])
 
 @router.post("/login", response_model=TokenResponse)
 def login(request: LoginRequest, db: Session = Depends(get_db)):

@@ -17,7 +17,7 @@ class RoleBase(BaseModel):
 class RoleCreate(RoleBase):
     pass
 
-class RoleRead(RoleBase):
+class RoleResponse(RoleBase):
     id: int
     class Config:
         orm_mode = True
@@ -28,7 +28,7 @@ class TypeDocumentBase(BaseModel):
 class TypeDocumentCreate(TypeDocumentBase):
     pass
 
-class TypeDocumentRead(TypeDocumentBase):
+class TypeDocumentResponse(TypeDocumentBase):
     id: int
     class Config:
         orm_mode = True
@@ -59,8 +59,8 @@ class UserUpdate(BaseModel):
 
 class UserResponse(UserBase):
     id: int
-    type_document: TypeDocumentRead
-    role: RoleRead
+    type_document: TypeDocumentResponse
+    role: RoleResponse
 
     class Config:
         orm_mode = True
