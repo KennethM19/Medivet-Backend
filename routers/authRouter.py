@@ -6,16 +6,16 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 import config
-import models
 from database import get_db
-from schemas import TokenResponse, LoginRequest
+from models import usersModel
+from schemes.userSchemes import TokenResponse, LoginRequest
 from utils.security import verify_password, create_token
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 @router.post("/login", response_model=TokenResponse)
 def login(request: LoginRequest, db: Session = Depends(get_db)):
-    user = db.query(models.Users).filter(models.Users.email == request.email).first()
+    user = db.query(usersModel.Users).filter(usersModel.Users.email == request.email).first()
 
     if not user or not verify_password(request.password, user.password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")

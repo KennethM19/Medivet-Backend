@@ -1,5 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Date, Float, Boolean
-from sqlalchemy.dialects.mysql import DOUBLE
+from sqlalchemy import Column, Integer, String, ForeignKey, Date
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -36,3 +35,4 @@ class Users(Base):
 
     type_document = relationship('TypeDocument', back_populates='users')
     role = relationship('Role', back_populates='users')
+    pets = relationship('Pets', back_populates='user')
