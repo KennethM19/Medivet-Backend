@@ -14,7 +14,7 @@ class Species(Base):
     name = Column(String)
 
     races = relationship('Race', back_populates='specie')
-    pets = relationship('Pet', back_populates='specie')
+    pets = relationship('Pets', back_populates='specie')
 
 class Race(Base):
     __tablename__ = 'race'
@@ -23,7 +23,7 @@ class Race(Base):
     name = Column(String)
 
     specie = relationship('Species', back_populates='races')
-    pets = relationship('Pet', back_populates='race')
+    pets = relationship('Pets', back_populates='race')
 
 class Pets(Base):
     __tablename__ = 'pet'
