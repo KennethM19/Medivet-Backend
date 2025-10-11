@@ -13,17 +13,17 @@ class Species(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
 
-    races = relationship('Race', back_populates='specie')
+    breeds = relationship('Breed', back_populates='specie')
     pets = relationship('Pets', back_populates='specie')
 
-class Race(Base):
-    __tablename__ = 'race'
+class Breed(Base):
+    __tablename__ = 'breed'
     id = Column(Integer, primary_key=True)
     species_id = Column(Integer, ForeignKey('species.id'))
     name = Column(String)
 
-    specie = relationship('Species', back_populates='races')
-    pets = relationship('Pets', back_populates='race')
+    specie = relationship('Species', back_populates='breeds')
+    pets = relationship('Pets', back_populates='breed')
 
 class Pets(Base):
     __tablename__ = 'pet'
@@ -34,12 +34,12 @@ class Pets(Base):
     photo = Column(String, nullable=True)
     sex_id = Column(Integer, ForeignKey('sex.id'), nullable=False)
     specie_id = Column(Integer, ForeignKey('species.id'), nullable=False)
-    race_id = Column(Integer, ForeignKey('race.id'), nullable=False)
+    breed_id = Column(Integer, ForeignKey('breed.id'), nullable=False)
     year_birth = Column(Integer, nullable=True)
     month_birth = Column(Integer, nullable=True)
     weight = Column(Double, nullable=True)
     neutered = Column(Boolean, nullable=False, default=False)
 
     specie = relationship('Species', back_populates='pets')
-    race = relationship('Race', back_populates='pets')
-    user = relationship('User', back_populates='pets')
+    breed = relationship('Breed', back_populates='pets')
+    user = relationship('Users', back_populates='pets')
