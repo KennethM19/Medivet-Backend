@@ -15,18 +15,14 @@ router =  APIRouter(prefix="/pets", tags=["Pets"])
 #CREAR MASCOTA
 @router.post("", response_model=PetResponse, status_code=status.HTTP_201_CREATED)
 def create_pet(request: PetCreate, db: Session =  Depends(get_db), current_user: usersModel.Users = Depends(get_current_user)):
-    existing_pet = db.query(petsModel.Pets).filter(petsModel.Pets.id == request.id).first()
 
-    if request.user != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Cannot create pet for another user"
-        )
+    if request.num_doc is not None:
+        existing_pet = db.query(petsModel.Pets).filter(petsModel.Pets.num_doc == request.num_doc).first()
 
-    if existing_pet:
-        raise HTTPException(status_code=400, detail="Pet already exists")
+        if existing_pet:
+            raise HTTPException(status_code=400, detail="Pet already exists")
 
-    pet_data = request.model_dump(exclude={'user_id'})
+    pet_data = request.model_dump()
     pet_data['user_id'] = current_user.id
 
     db_pet = petsModel.Pets(**pet_data)
