@@ -34,7 +34,7 @@ class TypeDocumentResponse(TypeDocumentBase):
         orm_mode = True
 
 class UserBase(BaseModel):
-    tipo_document_id: int
+    type_document_id: int
     num_document: str
     name: str
     lastname: str

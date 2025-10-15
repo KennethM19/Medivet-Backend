@@ -21,7 +21,7 @@ class Users(Base):
     __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True)
-    tipo_document_id = Column(Integer, ForeignKey('typedocument.id'), nullable=False)
+    type_document_id = Column(Integer, ForeignKey('typedocument.id'), nullable=False)
     num_document = Column(String, unique=True, nullable=False)
     name = Column(String, nullable=False)
     lastname = Column(String, nullable=False)
