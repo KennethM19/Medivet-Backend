@@ -1,6 +1,7 @@
+from datetime import datetime, timedelta, timezone
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -8,6 +9,7 @@ from database import get_db
 from dependencies.auth import get_current_user
 from models import usersModel
 from schemes.userSchemes import UserResponse, UserCreate, UserUpdate
+from utils.email import generate_verification_code, send_verification_email
 from utils.security import hash_password
 
 router = APIRouter(
@@ -17,16 +19,28 @@ router = APIRouter(
 
 #CREAR USUARIO
 @router.post("/", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-def create_user(user: UserCreate, db: Session = Depends(get_db)):
+def create_user(user: UserCreate, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     existing_user = db.query(usersModel.Users).filter(usersModel.Users.email == user.email).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
 
     hashed_pw = hash_password(user.password)
-    db_user = usersModel.Users(**user.model_dump(exclude={"password"}), password=hashed_pw)
+    verification_code = generate_verification_code()
+    expiration_time = datetime.now(timezone.utc) + timedelta(minutes=10)
+
+    db_user = usersModel.Users(
+        **user.model_dump(exclude={"password"}),
+        password=hashed_pw,
+        verification_code=verification_code,
+        verification_expiration=expiration_time,
+        is_verified=False
+    )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
+
+    background_tasks.add_task(send_verification_email, user.email, verification_code)
+
     return db_user
 
 #OBTENER TODOS LOS USUARIOS

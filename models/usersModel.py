@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Date
+from pydantic import BaseModel, EmailStr
+from sqlalchemy import Column, Integer, String, ForeignKey, Date, Boolean, DateTime
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -33,6 +34,14 @@ class Users(Base):
     password = Column(String, nullable=False)
     role_id = Column(Integer, ForeignKey('role.id'), nullable=False)
 
+    is_verified = Column(Boolean, default=False)
+    verification_code = Column(String(5), nullable=True)
+    verification_expiration = Column(DateTime(timezone=True), nullable=True, default=None)
+
     type_document = relationship('TypeDocument', back_populates='users')
     role = relationship('Role', back_populates='users')
     pets = relationship('Pets', back_populates='user')
+
+class VerifyRequest(BaseModel):
+    email: EmailStr
+    code: str
