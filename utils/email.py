@@ -2,6 +2,7 @@ import os
 import random
 import string
 
+from decouple import config
 from dotenv import load_dotenv
 from fastapi_mail import ConnectionConfig, MessageSchema, FastMail, MessageType
 from pydantic import SecretStr, EmailStr
@@ -9,13 +10,13 @@ from pydantic import SecretStr, EmailStr
 load_dotenv()
 
 conf = ConnectionConfig(
-    MAIL_USERNAME=os.getenv("MAIL_USERNAME"),
+    MAIL_USERNAME=config("MAIL_USERNAME"),
     MAIL_PASSWORD=SecretStr(os.getenv("MAIL_PASSWORD","")),
-    MAIL_FROM=os.getenv("MAIL_FROM"),
-    MAIL_PORT=os.getenv("MAIL_PORT", cast=int),
-    MAIL_SERVER=os.getenv("MAIL_SERVER"),
-    MAIL_TLS=os.getenv("MAIL_TLS", cast=bool),
-    MAIL_SSL=os.getenv("MAIL_SSL", cast=bool),
+    MAIL_FROM=config("MAIL_FROM"),
+    MAIL_PORT=config("MAIL_PORT", cast=int),
+    MAIL_SERVER=config("MAIL_SERVER"),
+    MAIL_TLS=config("MAIL_TLS", cast=bool),
+    MAIL_SSL=config("MAIL_SSL", cast=bool),
     USE_CREDENTIALS=True,
 )
 
