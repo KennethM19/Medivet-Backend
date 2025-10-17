@@ -3,39 +3,36 @@ import random
 import string
 
 from dotenv import load_dotenv
-from fastapi_mail import ConnectionConfig, MessageSchema, FastMail, MessageType
-from pydantic import SecretStr, EmailStr
+from pydantic import EmailStr
+from sendgrid import Mail, SendGridAPIClient
 
 load_dotenv()
 
-conf = ConnectionConfig(
-    MAIL_USERNAME=os.getenv("MAIL_USERNAME"),
-    MAIL_PASSWORD=SecretStr(os.getenv("MAIL_PASSWORD", "")),
-    MAIL_FROM=os.getenv("MAIL_FROM"),
-    MAIL_PORT=int(os.getenv("MAIL_PORT", 587)),
-    MAIL_SERVER=os.getenv("MAIL_SERVER"),
-    MAIL_STARTTLS=os.getenv("MAIL_STARTTLS", "True").lower() == "true",
-    MAIL_SSL_TLS=os.getenv("MAIL_SSL_TLS", "False").lower() == "true",
-    USE_CREDENTIALS=True,
-)
+SENDGRID_API_KEY = os.getenv("MAIL_PASSWORD")
+MAIL_FROM = os.getenv("MAIL_FROM")
 
 def generate_verification_code(length=5):
     characters = string.ascii_uppercase + string.digits
     return ''.join(random.choices(characters, k=length))
 
 async def send_verification_email(email: EmailStr, code: str):
-    subject = "Código de verificación - PetHealth"
-    html = f"""
-    <h2>¡Bienvenido a PetHealth!</h2>
-    <p>Tu código de verificación es: <b>{code}</b></p>
-    <p>Este código expira en 10 minutos.</p>
-    """
-
-    message = MessageSchema(
-        subject=subject,
-        recipients=[email],
-        body=html,
-        subtype="html"
+    message = Mail(
+        from_email=MAIL_FROM,
+        to_emails=email,
+        subject="Código de verificación - MediVet",
+        html_content=f"""
+            <div style="font-family: Arial, sans-serif; color: #333;">
+                <h2>Bienvenido a MediVet 🐾</h2>
+                <p>Gracias por registrarte. Tu código de verificación es:</p>
+                <h3 style="color: #0066CC;">{code}</h3>
+                <p>Por favor, ingrésalo en la aplicación para continuar.</p>
+                <p style="font-size: 12px; color: #999;">Este código expira en 10 minutos.</p>
+            </div>
+            """
     )
-    fm = FastMail(conf)
-    await fm.send_message(message)
+    try:
+        sg = SendGridAPIClient(SENDGRID_API_KEY)
+        sg.send(message)
+        print(f"✅ Correo enviado correctamente a {email}")
+    except Exception as e:
+        print(f"❌ Error al enviar correo a {email}: {e}")
