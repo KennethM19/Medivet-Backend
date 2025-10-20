@@ -1,12 +1,12 @@
 from typing import List, Optional
 
-from fastapi import APIRouter, HTTPException, Query
-from fastapi.params import Depends
+from fastapi import APIRouter, HTTPException, Query, File, Depends, UploadFile
 from sqlalchemy.orm import Session
 from starlette import status
 
 from database import get_db
 from dependencies.auth import get_current_user
+from firestore import upload_user_image_to_firebase, delete_photo_from_firebase, upload_pet_image_to_firebase
 from models import petsModel, usersModel
 from schemes.petSchemes import PetResponse, PetCreate, PetUpdate
 
@@ -30,6 +30,68 @@ def create_pet(request: PetCreate, db: Session =  Depends(get_db), current_user:
     db.commit()
     db.refresh(db_pet)
     return db_pet
+
+#SUBIR FOTO
+@router.post("/upload-photo/{pet_id}")
+async def upload_photo(
+        pet_id: int,
+        photo: UploadFile = File(...),
+        db: Session = Depends(get_db),
+        current_user: usersModel.Users = Depends(get_current_user),
+):
+    pet = db.query(petsModel.Pets).filter(petsModel.Pets.id == pet_id).first()
+    contents = await photo.read()
+    public_url = upload_pet_image_to_firebase(contents, photo.filename)
+
+    pet.photo = public_url
+    db.commit()
+    db.refresh(pet)
+
+    return {
+        "message": "Updated profile photo",
+        "url": public_url
+    }
+
+#ACTUALIZAR FOTO
+@router.put("/update-photo/{pet_id}")
+async def update_photo(
+        pet_id: int,
+        photo: UploadFile = File(...),
+        db: Session = Depends(get_db),
+        current_user: usersModel.Users = Depends(get_current_user)
+) :
+    pet = db.query(petsModel.Pets).filter(petsModel.Pets.id == pet_id).first()
+
+    if pet.photo:
+        delete_photo_from_firebase(pet.photo)
+
+    contents = await photo.read()
+    public_url = upload_pet_image_to_firebase(contents, photo.filename)
+
+    current_user.photo = public_url
+    db.commit()
+    db.refresh(current_user)
+    return {
+        "message": "Updated pet photo",
+    }
+
+#BORRAR FOTO
+@router.delete("/delete-photo/{pet_id}")
+def delete_photo(
+        pet_id: int,
+        current_user: usersModel.Users = Depends(get_current_user),
+        db: Session = Depends(get_db)
+):
+    pet = db.query(petsModel.Pets).filter(petsModel.Pets.id == pet_id).first()
+    if pet.photo:
+        delete_photo_from_firebase(pet.photo)
+        pet.photo = None
+        db.commit()
+        db.refresh(pet)
+        return {
+            "message": "Deleted pet photo",
+        }
+    raise HTTPException(status_code=404, detail="Photo not found")
 
 #OBTENER TODAS LAS MASCOTAS
 @router.get("", response_model=List[PetResponse])

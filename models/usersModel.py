@@ -32,6 +32,7 @@ class Users(Base):
     num_telephone = Column(String, nullable=True)
     email = Column(String, unique=True)
     password = Column(String, nullable=False)
+    photo = Column(String, nullable=True)
     role_id = Column(Integer, ForeignKey('role.id'), nullable=False)
 
     is_verified = Column(Boolean, default=False)

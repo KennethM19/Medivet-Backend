@@ -1,12 +1,13 @@
 from datetime import datetime, timedelta, timezone
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, UploadFile, File
 from sqlalchemy.orm import Session
 from starlette import status
 
 from database import get_db
 from dependencies.auth import get_current_user
+from firestore import upload_user_image_to_firebase, delete_photo_from_firebase
 from models import usersModel
 from schemes.userSchemes import UserResponse, UserCreate, UserUpdate
 from utils.email import generate_verification_code, send_verification_email
@@ -42,6 +43,61 @@ def create_user(user: UserCreate, background_tasks: BackgroundTasks, db: Session
     background_tasks.add_task(send_verification_email, user.email, verification_code)
 
     return db_user
+
+#SUBIR FOTO
+@router.post("/upload-photo")
+async def upload_photo(
+        photo: UploadFile = File(...),
+        db: Session = Depends(get_db),
+        current_user: usersModel.Users = Depends(get_current_user)
+):
+    contents = await photo.read()
+    public_url = upload_user_image_to_firebase(contents, photo.filename)
+
+    current_user.photo = public_url
+    db.commit()
+    db.refresh(current_user)
+
+    return {
+        "message": "Updated profile photo",
+        "url": public_url
+    }
+
+#ACTUALIZAR FOTO
+@router.put("/update-photo")
+async def update_photo(
+        photo: UploadFile = File(...),
+        db: Session = Depends(get_db),
+        current_user: usersModel.Users = Depends(get_current_user)
+) :
+    if current_user.photo:
+        delete_photo_from_firebase(current_user.photo)
+
+    contents = await photo.read()
+    public_url = upload_user_image_to_firebase(contents, photo.filename)
+
+    current_user.photo = public_url
+    db.commit()
+    db.refresh(current_user)
+    return {
+        "message": "Updated profile photo",
+    }
+
+#BORRAR FOTO
+@router.delete("/delete-photo")
+def delete_photo(
+        current_user: usersModel.Users = Depends(get_current_user),
+        db: Session = Depends(get_db)
+):
+    if current_user.photo:
+        delete_photo_from_firebase(current_user.photo)
+        current_user.photo = None
+        db.commit()
+        db.refresh(current_user)
+        return {
+            "message": "Deleted profile photo",
+        }
+    raise HTTPException(status_code=404, detail="Photo not found")
 
 #OBTENER TODOS LOS USUARIOS
 @router.get("/", response_model=List[UserResponse])

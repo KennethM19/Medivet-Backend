@@ -15,7 +15,7 @@ class SexResponse(SexBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class SpeciesBase(BaseModel):
     name: str
@@ -27,7 +27,7 @@ class SpeciesResponse(SpeciesBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class BreedBase(BaseModel):
     name: str
@@ -39,12 +39,11 @@ class BreedResponse(BreedBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class PetBase(BaseModel):
     num_doc: Optional[str] = None
     name: str
-    photo: Optional[str] = None
     sex_id: int
     specie_id: int
     breed_id: int
@@ -58,7 +57,6 @@ class PetCreate(PetBase):
 
 class PetUpdate(BaseModel):
     name: str
-    photo: Optional[str] = None
     weight: Optional[float] = None
     neutered: bool
 
@@ -70,4 +68,4 @@ class PetResponse(PetBase):
     sex: Optional[SexResponse] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True

@@ -20,7 +20,7 @@ class RoleCreate(RoleBase):
 class RoleResponse(RoleBase):
     id: int
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class TypeDocumentBase(BaseModel):
     name: str
@@ -31,7 +31,7 @@ class TypeDocumentCreate(TypeDocumentBase):
 class TypeDocumentResponse(TypeDocumentBase):
     id: int
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserBase(BaseModel):
     type_document_id: int
@@ -63,4 +63,4 @@ class UserResponse(UserBase):
     role: RoleResponse
 
     class Config:
-        orm_mode = True
+        from_attributes = True
