@@ -1,11 +1,16 @@
+import json
 import uuid
 from urllib.parse import urlparse, unquote
 
 from google.cloud import storage
+from google.oauth2 import service_account
 
 import config
 
-client = storage.Client.from_service_account_json(config.FIREBASE_CREDENTIALS)
+service_account_info = json.loads(config.FIREBASE_CREDENTIALS)
+credentials = service_account.Credentials.from_service_account_info(service_account_info)
+
+client = storage.Client(credentials=credentials)
 bucket = client.bucket(config.BUCKET_NAME)
 
 def upload_user_image_to_firebase(contents: bytes, filename: str) -> str:
