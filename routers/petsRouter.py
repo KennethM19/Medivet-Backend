@@ -151,6 +151,14 @@ def get_pet(pet_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Pet not found")
     return pet
 
+#OBTENER MASCOTA POR USUARIO
+@router.get("/{user_id}", response_model= PetResponse, status_code=status.HTTP_200_OK)
+def get_pet_by_user(user_id: int, db: Session = Depends(get_db)):
+    pet = db.query(petsModel.Pets).filter(petsModel.Pets.user_id == user_id).all()
+    if not pet:
+        raise HTTPException(status_code=404, detail="Pet not found")
+    return pet
+
 #EDITAR MASCOTA
 @router.put("/{pet_id}", response_model=PetResponse)
 def update_pet(pet_id: int, request: PetUpdate, db: Session = Depends(get_db), current_user: usersModel.Users = Depends(get_current_user)):
