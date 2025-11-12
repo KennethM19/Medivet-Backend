@@ -34,7 +34,6 @@ class TypeDocumentResponse(TypeDocumentBase):
         from_attributes = True
 
 class UserBase(BaseModel):
-    type_document_id: int
     num_document: str
     name: str
     lastname: str
@@ -43,7 +42,6 @@ class UserBase(BaseModel):
     num_cellphone: Optional[str] = None
     num_telephone: Optional[str] = None
     email: EmailStr
-    role_id: int
 
 class UserCreate(UserBase):
     password: str

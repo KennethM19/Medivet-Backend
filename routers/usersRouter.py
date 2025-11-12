@@ -105,15 +105,15 @@ def get_users(db: Session = Depends(get_db), current_user: usersModel.Users = De
     return db.query(usersModel.Users).all()
 
 #OBTENER USUARIO POR ID
-@router.get("/{user_id}", response_model=UserResponse)
-def get_user(user_id: int, db: Session = Depends(get_db), current_user: usersModel.Users = Depends(get_current_user)):
+@router.get("/id", response_model=UserResponse)
+def get_user_by_id(user_id: int, db: Session = Depends(get_db)):
     user = db.query(usersModel.Users).filter(usersModel.Users.id == user_id).first()
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
     return user
 
 #OBTENER USUARIO POR EMAIL
-@router.get("/{user_email}", response_model=UserResponse)
+@router.get("/email", response_model=UserResponse)
 def get_user_by_email(user_email: str, db: Session = Depends(get_db)):
     user = db.query(usersModel.Users).filter(usersModel.Users.email == user_email).first()
     if not user:
