@@ -43,6 +43,7 @@ class UserBase(BaseModel):
     num_cellphone: Optional[str] = None
     num_telephone: Optional[str] = None
     email: EmailStr
+    photo: Optional[str] = None
     role_id: int
 
 class UserCreate(UserBase):
