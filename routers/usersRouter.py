@@ -112,6 +112,14 @@ def get_user(user_id: int, db: Session = Depends(get_db), current_user: usersMod
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
+#OBTENER USUARIO POR EMAIL
+@router.get("/{user_email}", response_model=UserResponse)
+def get_user_by_email(user_email: str, db: Session = Depends(get_db)):
+    user = db.query(usersModel.Users).filter(usersModel.Users.email == user_email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
 #ACTUALIZAR DATOS USUARIO
 @router.put("/{user_id}", response_model=UserResponse)
 def update_user(user_id: int, updated_data: UserUpdate, db: Session = Depends(get_db), current_user: usersModel.Users = Depends(get_current_user)):
