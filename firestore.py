@@ -16,12 +16,12 @@ bucket = client.bucket(config.BUCKET_NAME)
 def upload_user_image_to_firebase(contents: bytes, filename: str) -> str:
     blob = bucket.blob(f"user_photos/{uuid.uuid4()}_{filename}")
     blob.upload_from_string(contents, content_type="image/jpeg")
-    return blob.public_url
+    return blob.make_public()
 
 def upload_pet_image_to_firebase(contents: bytes, filename: str) -> str:
     blob = bucket.blob(f"pet_photos/{uuid.uuid4()}_{filename}")
     blob.upload_from_string(contents, content_type="image/jpeg")
-    return blob.public_url
+    return blob.make_public()
 
 def delete_photo_from_firebase(public_url: str):
     parsed_url = urlparse(public_url)
