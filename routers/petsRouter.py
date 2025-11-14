@@ -32,7 +32,7 @@ def create_pet(request: PetCreate, db: Session =  Depends(get_db), current_user:
     return db_pet
 
 #SUBIR FOTO
-@router.post("/upload-photo/{pet_id}")
+@router.post("/upload-photo")
 async def upload_photo(
         pet_id: int,
         photo: UploadFile = File(...),
@@ -53,7 +53,7 @@ async def upload_photo(
     }
 
 #ACTUALIZAR FOTO
-@router.put("/update-photo/{pet_id}")
+@router.put("/update-photo")
 async def update_photo(
         pet_id: int,
         photo: UploadFile = File(...),
@@ -76,7 +76,7 @@ async def update_photo(
     }
 
 #BORRAR FOTO
-@router.delete("/delete-photo/{pet_id}")
+@router.delete("/delete-photo")
 def delete_photo(
         pet_id: int,
         current_user: usersModel.Users = Depends(get_current_user),
@@ -144,7 +144,7 @@ def get_all_pets(
     return query.offset(skip).limit(limit).all()
 
 #OBTENER MASCOTA POR ID
-@router.get("/{pet_id}", response_model=PetResponse, status_code=status.HTTP_200_OK)
+@router.get("/", response_model=PetResponse, status_code=status.HTTP_200_OK)
 def get_pet(pet_id: int, db: Session = Depends(get_db)):
     pet = db.query(petsModel.Pets).filter(petsModel.Pets.id == pet_id).first()
     if not pet:
@@ -152,7 +152,7 @@ def get_pet(pet_id: int, db: Session = Depends(get_db)):
     return pet
 
 #OBTENER MASCOTA POR USUARIO
-@router.get("/{user_id}", response_model= PetResponse, status_code=status.HTTP_200_OK)
+@router.get("/user", response_model= List[PetResponse], status_code=status.HTTP_200_OK)
 def get_pet_by_user(user_id: int, db: Session = Depends(get_db)):
     pet = db.query(petsModel.Pets).filter(petsModel.Pets.user_id == user_id).all()
     if not pet:
@@ -160,7 +160,7 @@ def get_pet_by_user(user_id: int, db: Session = Depends(get_db)):
     return pet
 
 #EDITAR MASCOTA
-@router.put("/{pet_id}", response_model=PetResponse)
+@router.put("/", response_model=PetResponse)
 def update_pet(pet_id: int, request: PetUpdate, db: Session = Depends(get_db), current_user: usersModel.Users = Depends(get_current_user)):
     pet = db.query(petsModel.Pets).filter(petsModel.Pets.id == pet_id).first()
 
