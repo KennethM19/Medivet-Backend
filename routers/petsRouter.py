@@ -1,7 +1,8 @@
+from datetime import date
 from typing import List, Optional
 
 from fastapi import APIRouter, HTTPException, Query, File, Depends, UploadFile
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from starlette import status
 
 from database import get_db
@@ -96,7 +97,7 @@ def delete_photo(
 #OBTENER TODAS LAS MASCOTAS
 @router.get("", response_model=List[PetResponse])
 def get_all_pets(
-        #FILTROS
+        # FILTROS
         user_id: Optional[int] = Query(None, description="Filter by user ID"),
         species_id: Optional[int] = Query(None, description="Filter by species"),
         breed_id: Optional[int] = Query(None, description="Filter by breed"),
@@ -105,19 +106,28 @@ def get_all_pets(
         name: Optional[str] = Query(None, description="Filter by name (contains)"),
         pet_id: Optional[int] = Query(None, description="Filter by pet ID"),
 
-        #PAGINACION
+        # PAGINACION
         skip: int = Query(0, ge=0, description="Skip records"),
         limit: int = Query(100, ge=1, le=1000, description="Limit records"),
 
-        #ORDENAMIENTO
+        # ORDENAMIENTO
         sort_by: str = Query("name", description="Field to sort by"),
         sort_order: str = Query("asc", regex="^(asc|desc)$", description="Sort order"),
 
         db: Session = Depends(get_db)
 ):
-    query = db.query(petsModel.Pets)
+    query = db.query(petsModel.Pets) \
+        .join(petsModel.Breed, isouter=True) \
+        .join(petsModel.Species, isouter=True) \
+        .join(petsModel.Sex, isouter=True) \
+        .options(
+            joinedload(petsModel.Pets.breed),
+            joinedload(petsModel.Pets.specie),
+            joinedload(petsModel.Pets.sex),
+            joinedload(petsModel.Pets.user)
+        )
 
-    #SE APLICAN LOS FILTROS
+    # FILTROS
     if pet_id:
         query = query.filter(petsModel.Pets.id == pet_id)
     if user_id:
@@ -133,18 +143,28 @@ def get_all_pets(
     if name:
         query = query.filter(petsModel.Pets.name.ilike(f"%{name}%"))
 
-    #SE APLICA EL ORDEN
-    sort_field = getattr(petsModel.Pets, sort_by, None)
-    if sort_field is not None:
-        if sort_order == "desc":
-            query = query.order_by(sort_field.desc())
-        else:
-            query = query.order_by(sort_field.asc())
-    else:
-        #ORDEN POR DEFECTO
-        query = query.order_by(petsModel.Pets.name.asc())
+    pets = query.offset(skip).limit(limit).all()
 
-    return query.offset(skip).limit(limit).all()
+    # Convertir directamente a PetResponse
+    result = []
+    for pet in pets:
+        age = calculate_age(pet.year_birth, pet.month_birth)
+        pet_response = PetResponse(
+            id=pet.id,
+            name=pet.name,
+            year_birth=pet.year_birth,
+            month_birth=pet.month_birth,
+            age=age,
+            weight=pet.weight,
+            neutered=pet.neutered,
+            sex=pet.sex,
+            species=pet.specie,
+            breed=pet.breed,
+            user=pet.user
+        )
+        result.append(pet_response)
+
+    return result
 
 #OBTENER MASCOTA POR USUARIO
 @router.get("/user", response_model= List[PetResponse], status_code=status.HTTP_200_OK)
@@ -182,3 +202,15 @@ def update_pet(pet_id: int, request: PetUpdate, db: Session = Depends(get_db), c
     db.commit()
     db.refresh(pet)
     return pet
+
+
+def calculate_age(year_birth: int, month_birth: int):
+    today = date.today()
+    years = today.year - year_birth
+    months = today.month - month_birth
+
+    if months < 0:
+        years -= 1
+        months += 12
+
+    return {"years": years, "months": months}

@@ -60,8 +60,15 @@ class PetUpdate(BaseModel):
     weight: Optional[float] = None
     neutered: bool
 
-class PetResponse(PetBase):
+class PetResponse(BaseModel):
     id: int
+    name: str
+    year_birth: Optional[int] = None
+    month_birth: Optional[int] = None
+    weight: Optional[float] = None
+    neutered: bool
+    age: Optional[dict] = None
+
     user: Optional[UserResponse] = None
     breed: Optional[BreedResponse] = None
     species: Optional[SpeciesResponse] = None

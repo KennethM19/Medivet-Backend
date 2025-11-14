@@ -8,6 +8,8 @@ class Sex(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
 
+    pets = relationship('Pets', back_populates='sex')
+
 class Species(Base):
     __tablename__ = 'species'
     id = Column(Integer, primary_key=True)
@@ -15,6 +17,7 @@ class Species(Base):
 
     breeds = relationship('Breed', back_populates='specie')
     pets = relationship('Pets', back_populates='specie')
+    vaccine_type = relationship('VaccineType', back_populates='specie')
 
 class Breed(Base):
     __tablename__ = 'breed'
@@ -44,3 +47,4 @@ class Pets(Base):
     breed = relationship('Breed', back_populates='pets')
     user = relationship('Users', back_populates='pets')
     vaccine = relationship('Vaccine', back_populates='pets')
+    sex = relationship('Sex', back_populates='pets')

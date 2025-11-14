@@ -1,8 +1,8 @@
-"""fix v7 table vaccine and pet
+"""fix vaccine types
 
-Revision ID: 41175d79b362
-Revises: 9904bc7ecc69
-Create Date: 2025-11-14 03:00:44.717925
+Revision ID: 319f79bac4b7
+Revises: 87b12008d1d2
+Create Date: 2025-11-14 17:18:39.739871
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '41175d79b362'
-down_revision: Union[str, Sequence[str], None] = '9904bc7ecc69'
+revision: str = '319f79bac4b7'
+down_revision: Union[str, Sequence[str], None] = '87b12008d1d2'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

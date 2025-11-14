@@ -1,8 +1,8 @@
-"""fix v4 table vaccine and pet
+"""initial schema
 
-Revision ID: b5a693dbbbd7
-Revises: 670028346c46
-Create Date: 2025-11-14 02:41:23.109467
+Revision ID: 87b12008d1d2
+Revises: 
+Create Date: 2025-11-14 17:14:48.462106
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'b5a693dbbbd7'
-down_revision: Union[str, Sequence[str], None] = '670028346c46'
+revision: str = '87b12008d1d2'
+down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
