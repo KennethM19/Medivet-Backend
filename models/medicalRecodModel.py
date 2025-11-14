@@ -8,7 +8,7 @@ class VaccineType(Base):
     id = Column(Integer, primary_key=True)
     type = Column(String, nullable=False)
 
-    vaccine = relationship('Vaccine', back_populates='vaccine_type')
+    vaccine = relationship('Vaccine', back_populates='type')
 
 class Vaccine(Base):
     __tablename__ = 'vaccine'
@@ -16,5 +16,5 @@ class Vaccine(Base):
     pet_id = Column(Integer, ForeignKey('pet.id'))
     vaccine_type_id = Column(Integer, ForeignKey('vaccine_type.id'))
 
-    pet = relationship('Pets', back_populates='vaccines')
-    type = relationship('VaccineType', back_populates='vaccines')
+    pets = relationship('Pets', back_populates='vaccine')
+    type = relationship('VaccineType', back_populates='vaccine')
