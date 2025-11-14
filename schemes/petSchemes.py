@@ -68,6 +68,7 @@ class PetResponse(BaseModel):
     weight: Optional[float] = None
     neutered: bool
     age: Optional[dict] = None
+    photo: Optional[str] = None
 
     user: Optional[UserResponse] = None
     breed: Optional[BreedResponse] = None
