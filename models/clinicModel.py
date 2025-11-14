@@ -34,7 +34,7 @@ class Appointment(Base):
     reason = Column(String, nullable=False)
 
 class AppointmentStatus(Base):
-    __tablename__ = 'appoiment_status'
+    __tablename__ = 'appointment_status'
     id = Column(Integer, primary_key=True)
     status = Column(String, nullable=False)
 
