@@ -103,6 +103,7 @@ def get_all_pets(
         sex_id: Optional[int] = Query(None, description="Filter by sex"),
         neutered: Optional[bool] = Query(None, description="Filter by neutered status"),
         name: Optional[str] = Query(None, description="Filter by name (contains)"),
+        pet_id: Optional[int] = Query(None, description="Filter by pet ID"),
 
         #PAGINACION
         skip: int = Query(0, ge=0, description="Skip records"),
@@ -117,6 +118,8 @@ def get_all_pets(
     query = db.query(petsModel.Pets)
 
     #SE APLICAN LOS FILTROS
+    if pet_id:
+        query = query.filter(petsModel.Pets.id == pet_id)
     if user_id:
         query = query.filter(petsModel.Pets.user_id == user_id)
     if species_id:
@@ -142,14 +145,6 @@ def get_all_pets(
         query = query.order_by(petsModel.Pets.name.asc())
 
     return query.offset(skip).limit(limit).all()
-
-#OBTENER MASCOTA POR ID
-@router.get("/", response_model=PetResponse, status_code=status.HTTP_200_OK)
-def get_pet(pet_id: int, db: Session = Depends(get_db)):
-    pet = db.query(petsModel.Pets).filter(petsModel.Pets.id == pet_id).first()
-    if not pet:
-        raise HTTPException(status_code=404, detail="Pet not found")
-    return pet
 
 #OBTENER MASCOTA POR USUARIO
 @router.get("/user", response_model= List[PetResponse], status_code=status.HTTP_200_OK)
