@@ -210,6 +210,31 @@ def update_pet(
     db.refresh(pet)
     return pet
 
+@router.delete("", status_code=status.HTTP_204_NO_CONTENT)
+def delete_pet(
+    pet_id: int,
+    db: Session = Depends(get_db),
+    current_user: usersModel.Users = Depends(get_current_user)
+):
+    # Buscar la mascota
+    pet = db.query(petsModel.Pets).filter(petsModel.Pets.id == pet_id).first()
+
+    if not pet:
+        raise HTTPException(status_code=404, detail="Pet not found")
+
+    # Validar que el dueño sea el usuario autenticado
+    if pet.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Cannot delete pet for another user"
+        )
+
+    # Eliminar
+    db.delete(pet)
+    db.commit()
+    return {"detail": "Pet deleted successfully"}
+
+
 def calculate_age(year_birth: int, month_birth: int):
     today = date.today()
     years = today.year - year_birth
