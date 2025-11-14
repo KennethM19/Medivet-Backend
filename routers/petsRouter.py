@@ -175,8 +175,13 @@ def get_pet_by_user(user_id: int, db: Session = Depends(get_db)):
     return pet
 
 #EDITAR MASCOTA
-@router.put("/", response_model=PetResponse)
-def update_pet(pet_id: int, request: PetUpdate, db: Session = Depends(get_db), current_user: usersModel.Users = Depends(get_current_user)):
+@router.put("", response_model=PetResponse)
+def update_pet(
+    pet_id: int,
+    request: PetUpdate,
+    db: Session = Depends(get_db),
+    current_user: usersModel.Users = Depends(get_current_user)
+):
     pet = db.query(petsModel.Pets).filter(petsModel.Pets.id == pet_id).first()
 
     if not pet:
@@ -188,21 +193,22 @@ def update_pet(pet_id: int, request: PetUpdate, db: Session = Depends(get_db), c
             detail="Cannot update pet for another user"
         )
 
-    updated_pet = request.model_dump(exclude_unset=True)
+    updated_fields = request.model_dump(exclude_unset=True)
 
-    if 'user_id' in update_pet:
+    if "user_id" in updated_fields:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Cannot change pet owner"
         )
 
-    for field, value in updated_pet.items():
-        setattr(pet, field, value)
+    allowed_fields = {"weight", "neutered", "photo"}
+    for field, value in updated_fields.items():
+        if field in allowed_fields:
+            setattr(pet, field, value)
 
     db.commit()
     db.refresh(pet)
     return pet
-
 
 def calculate_age(year_birth: int, month_birth: int):
     today = date.today()

@@ -56,9 +56,9 @@ class PetCreate(PetBase):
     pass
 
 class PetUpdate(BaseModel):
-    name: str
     weight: Optional[float] = None
-    neutered: bool
+    neutered: Optional[bool] = None
+    photo: Optional[str] = None
 
 class PetResponse(BaseModel):
     id: int
