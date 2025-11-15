@@ -47,6 +47,7 @@ class PetBase(BaseModel):
     sex_id: int
     specie_id: int
     breed_id: int
+    photo: Optional[str] = None
     year_birth: Optional[int] = None
     month_birth: Optional[int] = None
     weight: Optional[float] = None

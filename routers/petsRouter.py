@@ -15,7 +15,7 @@ router =  APIRouter(prefix="/pets", tags=["Pets"])
 
 #CREAR MASCOTA
 @router.post("", response_model=PetResponse, status_code=status.HTTP_201_CREATED)
-def create_pet(request: PetCreate, db: Session =  Depends(get_db), current_user: usersModel.Users = Depends(get_current_user)):
+async def create_pet(request: PetCreate, photo: UploadFile = File(...), db: Session =  Depends(get_db), current_user: usersModel.Users = Depends(get_current_user)):
 
     if request.num_doc is not None:
         existing_pet = db.query(petsModel.Pets).filter(petsModel.Pets.num_doc == request.num_doc).first()
@@ -25,6 +25,10 @@ def create_pet(request: PetCreate, db: Session =  Depends(get_db), current_user:
 
     pet_data = request.model_dump()
     pet_data['user_id'] = current_user.id
+
+    contents = await photo.read()
+    public_url = upload_pet_image_to_firebase(contents, photo.filename)
+    pet_data['photo'] = public_url
 
     db_pet = petsModel.Pets(**pet_data)
     db.add(db_pet)
