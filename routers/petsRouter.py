@@ -180,12 +180,10 @@ def get_all_pets(
         )
         result.append(pet_response)
 
-    return result
-
-#OBTENER MASCOTA POR USUARIO
-@router.get("/user", response_model= List[PetResponse], status_code=status.HTTP_200_OK)
-def get_pet_by_user(user_id: int, db: Session = Depends(get_db)):
-    pet = db.query(petsModel.Pets).filter(petsModel.Pets.user_id == user_id).all()
+#OBTENER MASCOTA POR ID
+@router.get("/{pet_id}", response_model=PetResponse, status_code=status.HTTP_200_OK)
+def get_pet(pet_id: int, db: Session = Depends(get_db)):
+    pet = db.query(petsModel.Pets).filter(petsModel.Pets.id == pet_id).first()
     if not pet:
         raise HTTPException(status_code=404, detail="Pet not found")
     return pet
