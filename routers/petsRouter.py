@@ -171,6 +171,7 @@ def get_all_pets(
             month_birth=pet.month_birth,
             age=age,
             weight=pet.weight,
+            photo=pet.photo,
             neutered=pet.neutered,
             sex=pet.sex,
             species=pet.specie,
