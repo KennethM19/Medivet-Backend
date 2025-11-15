@@ -9,4 +9,6 @@ BUCKET_NAME = os.getenv('BUCKET_NAME')
 
 SECRET_KEY = "mi_clave_super_secreta"
 ALGORITHM = "HS256"
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+OPENAI_MODEL = os.getenv('OPENAI_MODEL')
 ACCESS_TOKEN_EXPIRE_MINUTES = 60

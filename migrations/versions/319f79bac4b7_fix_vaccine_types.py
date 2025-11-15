@@ -1,8 +1,8 @@
-"""modelos_corregidos
+"""fix vaccine types
 
-Revision ID: 5958c3bc3e23
-Revises: 0535622f8959
-Create Date: 2025-10-10 21:53:51.566548
+Revision ID: 319f79bac4b7
+Revises: 87b12008d1d2
+Create Date: 2025-11-14 17:18:39.739871
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '5958c3bc3e23'
-down_revision: Union[str, Sequence[str], None] = '0535622f8959'
+revision: str = '319f79bac4b7'
+down_revision: Union[str, Sequence[str], None] = '87b12008d1d2'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

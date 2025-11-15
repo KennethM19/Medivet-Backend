@@ -33,6 +33,6 @@ async def send_verification_email(email: EmailStr, code: str):
     try:
         sg = SendGridAPIClient(SENDGRID_API_KEY)
         sg.send(message)
-        print(f"✅ Correo enviado correctamente a {email}")
+        print(f"Correo enviado correctamente a {email}")
     except Exception as e:
-        print(f"❌ Error al enviar correo a {email}: {e}")
+        print(f"Error al enviar correo a {email}: {e}")

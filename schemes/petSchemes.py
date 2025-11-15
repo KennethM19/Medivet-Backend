@@ -56,12 +56,20 @@ class PetCreate(PetBase):
     pass
 
 class PetUpdate(BaseModel):
+    weight: Optional[float] = None
+    neutered: Optional[bool] = None
+    photo: Optional[str] = None
+
+class PetResponse(BaseModel):
+    id: int
     name: str
+    year_birth: Optional[int] = None
+    month_birth: Optional[int] = None
     weight: Optional[float] = None
     neutered: bool
+    age: Optional[dict] = None
+    photo: Optional[str] = None
 
-class PetResponse(PetBase):
-    id: int
     user: Optional[UserResponse] = None
     breed: Optional[BreedResponse] = None
     species: Optional[SpeciesResponse] = None
