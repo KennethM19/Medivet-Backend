@@ -7,7 +7,7 @@ from starlette import status
 
 from database import get_db
 from dependencies.auth import get_current_user
-from firestore import upload_user_image_to_firebase, delete_photo_from_firebase, upload_pet_image_to_firebase
+from firestore import delete_photo_from_firebase, upload_pet_image_to_firebase
 from models import petsModel, usersModel
 from schemes.petSchemes import PetResponse, PetCreate, PetUpdate
 
@@ -56,25 +56,40 @@ async def upload_photo(
 #ACTUALIZAR FOTO
 @router.put("/update-photo")
 async def update_photo(
-        pet_id: int,
-        photo: UploadFile = File(...),
-        db: Session = Depends(get_db),
-        current_user: usersModel.Users = Depends(get_current_user)
-) :
+    pet_id: int,
+    photo: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_user: usersModel.Users = Depends(get_current_user)
+):
     pet = db.query(petsModel.Pets).filter(petsModel.Pets.id == pet_id).first()
 
+    if not pet:
+        raise HTTPException(status_code=404, detail="Pet not found")
+
+    if pet.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Cannot update photo for another user's pet"
+        )
+
+    # Si ya tiene foto, eliminarla de Firebase
     if pet.photo:
         delete_photo_from_firebase(pet.photo)
 
+    # Subir nueva foto
     contents = await photo.read()
     public_url = upload_pet_image_to_firebase(contents, photo.filename)
 
-    current_user.photo = public_url
+    # Guardar URL en la mascota
+    pet.photo = public_url
     db.commit()
-    db.refresh(current_user)
+    db.refresh(pet)
+
     return {
         "message": "Updated pet photo",
+        "url": public_url
     }
+
 
 #BORRAR FOTO
 @router.delete("/delete-photo")
