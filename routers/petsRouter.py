@@ -180,13 +180,7 @@ def get_all_pets(
         )
         result.append(pet_response)
 
-#OBTENER MASCOTA POR ID
-@router.get("/{pet_id}", response_model=PetResponse, status_code=status.HTTP_200_OK)
-def get_pet(pet_id: int, db: Session = Depends(get_db)):
-    pet = db.query(petsModel.Pets).filter(petsModel.Pets.id == pet_id).first()
-    if not pet:
-        raise HTTPException(status_code=404, detail="Pet not found")
-    return pet
+    return result
 
 #EDITAR MASCOTA
 @router.put("", response_model=PetResponse)
