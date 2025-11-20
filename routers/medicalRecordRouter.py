@@ -1,68 +1,74 @@
-from typing import List
+from typing import List, Optional
 
+from fastapi import HTTPException
 from fastapi.params import Depends
 from fastapi.routing import APIRouter
 from starlette import status
 
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, Query, joinedload
 from database import get_db
-from models.medicalRecodModel import VaccineType, Vaccine
-from schemes.medicalRecordSchemes import VaccineTypeResponse, VaccineTypeCreate, VaccineResponse, VaccineCreate
+from models.intemediateTables import PetVaccine
+from models.medicalRecodModel import VaccineType
+from schemes.medicalRecordSchemes import VaccineTypeResponse, VaccineTypeCreate, PetVaccineCreate, PetVaccineResponse
 
 router = APIRouter(
     prefix="/medical-record",
     tags=["medical-record"],
 )
 
-@router.post("/vaccine-type", response_model= VaccineTypeResponse, status_code=status.HTTP_201_CREATED )
+# Crear tipo de vacuna
+@router.post("/vaccine-type", response_model=VaccineTypeResponse, status_code=status.HTTP_201_CREATED)
 def create_vaccine_type(request: VaccineTypeCreate, db: Session = Depends(get_db)):
-    vaccine_type_data = request.model_dump()
-    new_vaccine_type = VaccineTypeCreate(**vaccine_type_data)
-
+    new_vaccine_type = VaccineType(**request.model_dump())
     db.add(new_vaccine_type)
     db.commit()
     db.refresh(new_vaccine_type)
-
     return new_vaccine_type
 
+# Obtener todos los tipos de vacuna
 @router.get("/vaccine-type", response_model=List[VaccineTypeResponse])
 def get_vaccine_types(db: Session = Depends(get_db)):
-    vaccine_types = db.query(VaccineType).all()
+    return db.query(VaccineType).all()
 
-    return vaccine_types
-
+# Eliminar tipo de vacuna por ID
 @router.delete("/vaccine-type", response_model=VaccineTypeResponse)
 def delete_vaccine_type(vaccine_type_id: int, db: Session = Depends(get_db)):
     vaccine_type = db.query(VaccineType).filter(VaccineType.id == vaccine_type_id).first()
-
+    if not vaccine_type:
+        raise HTTPException(status_code=404, detail="VaccineType not found")
     db.delete(vaccine_type)
     db.commit()
+    return vaccine_type
 
-    return
-
-
-@router.post("/vaccine", response_model=VaccineResponse)
-def create_vaccine(request: VaccineCreate, db: Session = Depends(get_db)):
-    vaccine_data = request.model_dump()
-    new_vaccine = VaccineCreate(**vaccine_data)
-
-    db.add(new_vaccine)
+# Crear aplicación de vacuna
+@router.post("/pet-vaccine", response_model=PetVaccineResponse, status_code=status.HTTP_201_CREATED)
+def create_pet_vaccine(request: PetVaccineCreate, db: Session = Depends(get_db)):
+    new_pet_vaccine = PetVaccine(**request.model_dump())
+    db.add(new_pet_vaccine)
     db.commit()
-    db.refresh(new_vaccine)
+    db.refresh(new_pet_vaccine)
+    return new_pet_vaccine
 
-    return new_vaccine
+# Obtener todas las aplicaciones de vacunas
+@router.get("/pet-vaccine", response_model=List[PetVaccineResponse])
+def get_pet_vaccines(
+        specie_id: Optional[int],
+        db: Session = Depends(get_db)
+):
+    query = db.query(PetVaccine).options(joinedload(PetVaccine.vaccine_type))
 
-@router.get("/vaccine", response_model=List[VaccineResponse])
-def get_vaccine(db: Session = Depends(get_db)):
-    vaccines = db.query(Vaccine).all()
+    if specie_id:
+        # join con VaccineType para filtrar por especie
+        query = query.join(PetVaccine.vaccine_type).filter(VaccineType.specie_id == specie_id)
 
-    return vaccines
+    return query.all()
 
-@router.delete("/vaccine", response_model=VaccineResponse)
-def delete_vaccine(vaccine_id: int, db: Session = Depends(get_db)):
-    vaccine = db.query(Vaccine).filter(Vaccine.id == vaccine_id).first()
-
-    db.delete(vaccine)
+# Eliminar aplicación de vacuna por ID
+@router.delete("/pet-vaccine", response_model=PetVaccineResponse)
+def delete_pet_vaccine(pet_vaccine_id: int, db: Session = Depends(get_db)):
+    pet_vaccine = db.query(PetVaccine).filter(PetVaccine.id == pet_vaccine_id).first()
+    if not pet_vaccine:
+        raise HTTPException(status_code=404, detail="PetVaccine not found")
+    db.delete(pet_vaccine)
     db.commit()
-
-    return
+    return pet_vaccine

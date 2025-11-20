@@ -8,8 +8,7 @@ from starlette import status
 import config
 from database import get_db
 from models import usersModel
-from models.usersModel import VerifyRequest
-from schemes.userSchemes import TokenResponse, LoginRequest
+from schemes.userSchemes import TokenResponse, LoginRequest, VerifyRequest
 from utils.security import verify_password, create_token
 
 router = APIRouter(prefix="/auth", tags=["Auth"])

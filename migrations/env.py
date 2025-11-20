@@ -12,6 +12,7 @@ from models.usersModel import *
 from models.petsModel import *
 from models.medicalRecodModel import  *
 from models.clinicModel import *
+from models.intemediateTables import *
 
 load_dotenv()
 config = context.config

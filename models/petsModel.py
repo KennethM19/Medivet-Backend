@@ -46,5 +46,6 @@ class Pets(Base):
     specie = relationship('Species', back_populates='pets')
     breed = relationship('Breed', back_populates='pets')
     user = relationship('Users', back_populates='pets')
-    vaccine = relationship('Vaccine', back_populates='pets')
     sex = relationship('Sex', back_populates='pets')
+
+    vaccines = relationship("PetVaccine", back_populates="pet")

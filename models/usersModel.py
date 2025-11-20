@@ -42,7 +42,3 @@ class Users(Base):
     type_document = relationship('TypeDocument', back_populates='users')
     role = relationship('Role', back_populates='users')
     pets = relationship('Pets', back_populates='user')
-
-class VerifyRequest(BaseModel):
-    email: EmailStr
-    code: str
