@@ -1,4 +1,4 @@
-from sqlalchemy import Table, Column, Integer, ForeignKey, Date, String
+from sqlalchemy import Column, Integer, ForeignKey, Date, String
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -16,3 +16,12 @@ class PetVaccine(Base):
 
     pet = relationship("Pets", back_populates="vaccines")
     vaccine_type = relationship("VaccineType", back_populates="pets")
+
+class ClinicServices(Base):
+    __tablename__ = 'clinic_services'
+    id = Column(Integer, primary_key=True)
+    clinic_id = Column(Integer, ForeignKey("clinic.id"), nullable=False)
+    service_id = Column(Integer, ForeignKey("service.id"), nullable=False)
+
+    clinics = relationship("Clinic", back_populates="services")
+    services = relationship("Service", back_populates="clinics")

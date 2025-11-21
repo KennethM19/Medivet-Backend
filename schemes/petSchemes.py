@@ -62,6 +62,7 @@ class PetUpdate(BaseModel):
 
 class PetResponse(BaseModel):
     id: int
+    num_doc: Optional[str] = None
     name: str
     year_birth: Optional[int] = None
     month_birth: Optional[int] = None
