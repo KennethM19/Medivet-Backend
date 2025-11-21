@@ -85,7 +85,7 @@ def create_clinic(request: ClinicCreate, db: Session = Depends(get_db)):
 
 #OBTENER CLINICA
 @router.get("", response_model=list[ClinicResponse])
-def get_clinics(clinic_id:Optional[int], db: Session = Depends(get_db)):
+def get_clinics(clinic_id = Optional[int], db: Session = Depends(get_db)):
 
     if clinic_id is not None:
         clinic = (
@@ -106,7 +106,7 @@ def update_clinic(clinic_id: int, data: ClinicUpdate, db: Session = Depends(get_
     if not clinic:
         raise HTTPException(404, "Clinic not found")
 
-    for key, value in data.dict().items():
+    for key, value in data.model_dump().items():
         setattr(clinic, key, value)
 
     db.commit()
@@ -165,7 +165,7 @@ def remove_service_from_clinic(clinic_id: int, service_id: int, db: Session = De
 #CREAR CITA
 @router.post("/appointment", response_model=AppointmentBase)
 def create_appointment(data: AppointmentCreate, db: Session = Depends(get_db)):
-    appt = Appointment(**data.dict())
+    appt = Appointment(**data.model_dump())
     db.add(appt)
     db.commit()
     db.refresh(appt)
@@ -173,7 +173,7 @@ def create_appointment(data: AppointmentCreate, db: Session = Depends(get_db)):
 
 #OBTENER CITA
 @router.get("/appointment", response_model=list[AppointmentBase])
-def get_appointments(appointment_id: Optional[int], db: Session = Depends(get_db)):
+def get_appointments(appointment_id = Optional[int], db: Session = Depends(get_db)):
 
     if appointment_id is not None:
         appointments = (
@@ -195,7 +195,7 @@ def update_appointment(appointment_id: int, data: AppointmentUpdate, db: Session
     if not appt:
         raise HTTPException(404, "Appointment not found")
 
-    for key, value in data.dict().items():
+    for key, value in data.model_dump().items():
         setattr(appt, key, value)
 
     db.commit()
@@ -216,7 +216,7 @@ def delete_appointment(appointment_id: int, db: Session = Depends(get_db)):
 #CREAR HORARIO
 @router.post("/schedules", response_model=SchedulesResponse)
 def create_schedule(data: SchedulesCreate, db: Session = Depends(get_db)):
-    schedule = Schedules(**data.dict())
+    schedule = Schedules(**data.model_dump())
     db.add(schedule)
     db.commit()
     db.refresh(schedule)
@@ -224,7 +224,7 @@ def create_schedule(data: SchedulesCreate, db: Session = Depends(get_db)):
 
 #OBTENER HORARIO
 @router.get("/schedules", response_model=list[SchedulesResponse])
-def get_schedules(schedule_id: Optional[int] ,db: Session = Depends(get_db)):
+def get_schedules(schedule_id = Optional[int] ,db: Session = Depends(get_db)):
 
     if schedule_id is not None:
         schedules = (
@@ -239,14 +239,14 @@ def get_schedules(schedule_id: Optional[int] ,db: Session = Depends(get_db)):
 
     return db.query(Schedules).all()
 
-#ACTRUALIZAR HORARIO
+#ACTUALIZAR HORARIO
 @router.put("/schedules", response_model=SchedulesResponse)
 def update_schedule(schedule_id: int, data: SchedulesBase, db: Session = Depends(get_db)):
     schedule = db.query(Schedules).filter(Schedules.id == schedule_id).first()
     if not schedule:
         raise HTTPException(404, "Schedule not found")
 
-    for key, value in data.dict().items():
+    for key, value in data.model_dump().items():
         setattr(schedule, key, value)
 
     db.commit()
