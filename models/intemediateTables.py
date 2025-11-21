@@ -24,4 +24,4 @@ class ClinicServices(Base):
     service_id = Column(Integer, ForeignKey("service.id"), nullable=False)
 
     clinics = relationship("Clinic", back_populates="services")
-    services = relationship("Service", back_populates="clinics")
+    services = relationship("Services", back_populates="clinics")
