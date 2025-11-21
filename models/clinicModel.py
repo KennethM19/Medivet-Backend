@@ -45,7 +45,7 @@ class Appointment(Base):
     status = relationship("AppointmentStatus", back_populates="appointments")
     clinics = relationship("Clinic", back_populates="appointments")
     services = relationship("Services", back_populates="appointments")
-    pets = relationship("Pet", back_populates="appointments")
+    pets = relationship("Pets", back_populates="appointments")
 
 class AppointmentStatus(Base):
     __tablename__ = 'appointment_status'
