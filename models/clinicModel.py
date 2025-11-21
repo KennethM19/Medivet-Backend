@@ -19,7 +19,7 @@ class Clinic(Base):
 
     services = relationship("ClinicServices", back_populates="clinics")
     schedules = relationship("Schedules", back_populates="clinics")
-    appointments = relationship("Appointments", back_populates="clinics")
+    appointments = relationship("Appointment", back_populates="clinics")
 
 class Services(Base):
     __tablename__ = 'service'
@@ -28,7 +28,7 @@ class Services(Base):
     description = Column(String, nullable=False)
 
     clinics = relationship("ClinicServices", back_populates="services")
-    appointments = relationship("Appointments", back_populates="services")
+    appointments = relationship("Appointment", back_populates="services")
 
 class Appointment(Base):
     __tablename__ = 'appointment'
