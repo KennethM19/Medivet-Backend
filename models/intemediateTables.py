@@ -6,7 +6,7 @@ from database import Base
 class PetVaccine(Base):
     __tablename__ = "pet_vaccine"
     id = Column(Integer, primary_key=True)
-    pet_id = Column(Integer, ForeignKey("pet.id"), nullable=False)
+    pet_id = Column(Integer, ForeignKey('pet.id', ondelete="CASCADE"), nullable=False)
     vaccine_type_id = Column(Integer, ForeignKey("vaccine_type.id"), nullable=False)
 
     date_applied = Column(Date, nullable=True)
