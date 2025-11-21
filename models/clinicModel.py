@@ -7,6 +7,7 @@ from database import Base
 class Clinic(Base):
     __tablename__ = 'clinic'
     id = Column(Integer, primary_key=True)
+    ruc = Column(String, unique=True, nullable=False)
     name = Column(String, nullable=False)
     address = Column(String, nullable=False)
     district = Column(String, nullable=False)

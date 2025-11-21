@@ -20,6 +20,7 @@ class ServiceResponse(ServiceBase):
 
 
 class ClinicBase(BaseModel):
+    ruc: str
     name: str
     address: str
     district: str
@@ -37,6 +38,7 @@ class ClinicUpdate(ClinicBase):
 
 class ClinicResponse(ClinicBase):
     id: int
+    ruc: str
     name: str
     address: str
     district: str
@@ -64,6 +66,23 @@ class AppointmentUpdate(AppointmentBase):
     status_id: int
 
     services: ServiceResponse
+    clinics: ClinicResponse
+
+class SchedulesBase(BaseModel):
+    clinic_id: int
+    day: str
+    open_time: str
+    close_time: str
+
+class SchedulesCreate(SchedulesBase):
+    pass
+
+class SchedulesResponse(SchedulesBase):
+    id: int
+    clinic_id: int
+    day: str
+    open_time: str
+    close_time: str
     clinics: ClinicResponse
 
 
