@@ -17,7 +17,7 @@ class Clinic(Base):
     longitude = Column(String, nullable=False)
     webPage = Column(String, nullable=True)
 
-    services = relationship("ClinicService", back_populates="clinics")
+    services = relationship("ClinicServices", back_populates="clinics")
     schedules = relationship("Schedules", back_populates="clinics")
     appointments = relationship("Appointments", back_populates="clinics")
 
