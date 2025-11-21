@@ -15,7 +15,7 @@ from schemes.clinicSchemes import SchedulesResponse, ClinicResponse, ClinicCreat
 router = APIRouter(prefix="/clinics", tags=["Clinics"])
 
 #CREAR SERVICIOS
-@router.post("", response_model=ServiceResponse)
+@router.post("/service", response_model=ServiceResponse)
 def create_service(data: ServiceCreate, db: Session = Depends(get_db)):
     service = clinicModel.Services(**data.model_dump())
     db.add(service)
@@ -24,7 +24,7 @@ def create_service(data: ServiceCreate, db: Session = Depends(get_db)):
     return service
 
 #OBTENER SERVICIOS
-@router.get("", response_model=list[ServiceResponse])
+@router.get("/service", response_model=list[ServiceResponse])
 def get_services(service_id = Optional[int], db: Session = Depends(get_db)):
     if service_id is not None:
         service = (
@@ -40,7 +40,7 @@ def get_services(service_id = Optional[int], db: Session = Depends(get_db)):
     return db.query(clinicModel.Services).all()
 
 #ACTUALIZAR SERVICIOS
-@router.put("", response_model=ServiceResponse)
+@router.put("/service", response_model=ServiceResponse)
 def update_service(service_id: int, data: ServiceUpdate, db: Session = Depends(get_db)):
     service = db.query(clinicModel.Services).filter(clinicModel.Services.id == service_id).first()
     if not service:
@@ -54,7 +54,7 @@ def update_service(service_id: int, data: ServiceUpdate, db: Session = Depends(g
     return service
 
 #ELIMINAR SERVICIOS
-@router.delete("")
+@router.delete("/service")
 def delete_service(service_id: int, db: Session = Depends(get_db)):
     service = db.query(clinicModel.Services).filter(clinicModel.Services.id == service_id).first()
     if not service:
@@ -163,7 +163,7 @@ def remove_service_from_clinic(clinic_id: int, service_id: int, db: Session = De
     return {"message": "Service removed from clinic"}
 
 #CREAR CITA
-@router.post("", response_model=AppointmentBase)
+@router.post("/appointment", response_model=AppointmentBase)
 def create_appointment(data: AppointmentCreate, db: Session = Depends(get_db)):
     appt = Appointment(**data.dict())
     db.add(appt)
@@ -172,7 +172,7 @@ def create_appointment(data: AppointmentCreate, db: Session = Depends(get_db)):
     return appt
 
 #OBTENER CITA
-@router.get("", response_model=list[AppointmentBase])
+@router.get("/appointment", response_model=list[AppointmentBase])
 def get_appointments(appointment_id: Optional[int], db: Session = Depends(get_db)):
 
     if appointment_id is not None:
@@ -189,7 +189,7 @@ def get_appointments(appointment_id: Optional[int], db: Session = Depends(get_db
     return db.query(Appointment).all()
 
 #ACTUALIZAR CITA
-@router.put("", response_model=AppointmentBase)
+@router.put("/appointment", response_model=AppointmentBase)
 def update_appointment(appointment_id: int, data: AppointmentUpdate, db: Session = Depends(get_db)):
     appt = db.query(Appointment).filter(Appointment.id == appointment_id).first()
     if not appt:
@@ -203,7 +203,7 @@ def update_appointment(appointment_id: int, data: AppointmentUpdate, db: Session
     return appt
 
 #ELIMINAR CITA
-@router.delete("")
+@router.delete("/appointment")
 def delete_appointment(appointment_id: int, db: Session = Depends(get_db)):
     appt = db.query(Appointment).filter(Appointment.id == appointment_id).first()
     if not appt:
@@ -214,7 +214,7 @@ def delete_appointment(appointment_id: int, db: Session = Depends(get_db)):
     return {"message": "Appointment deleted"}
 
 #CREAR HORARIO
-@router.post("", response_model=SchedulesResponse)
+@router.post("/schedules", response_model=SchedulesResponse)
 def create_schedule(data: SchedulesCreate, db: Session = Depends(get_db)):
     schedule = Schedules(**data.dict())
     db.add(schedule)
@@ -223,7 +223,7 @@ def create_schedule(data: SchedulesCreate, db: Session = Depends(get_db)):
     return schedule
 
 #OBTENER HORARIO
-@router.get("", response_model=list[SchedulesResponse])
+@router.get("/schedules", response_model=list[SchedulesResponse])
 def get_schedules(schedule_id: Optional[int] ,db: Session = Depends(get_db)):
 
     if schedule_id is not None:
@@ -240,7 +240,7 @@ def get_schedules(schedule_id: Optional[int] ,db: Session = Depends(get_db)):
     return db.query(Schedules).all()
 
 #ACTRUALIZAR HORARIO
-@router.put("", response_model=SchedulesResponse)
+@router.put("/schedules", response_model=SchedulesResponse)
 def update_schedule(schedule_id: int, data: SchedulesBase, db: Session = Depends(get_db)):
     schedule = db.query(Schedules).filter(Schedules.id == schedule_id).first()
     if not schedule:
@@ -254,7 +254,7 @@ def update_schedule(schedule_id: int, data: SchedulesBase, db: Session = Depends
     return schedule
 
 #ELIMINAR HORARIO
-@router.delete("")
+@router.delete("/schedules")
 def delete_schedule(schedule_id: int, db: Session = Depends(get_db)):
     schedule = db.query(Schedules).filter(Schedules.id == schedule_id).first()
     if not schedule:
