@@ -34,7 +34,7 @@ def get_services(service_id: Optional[int] = Query(None), db: Session = Depends(
         )
         if not service:
             raise HTTPException(status_code=404, detail="Service not found")
-        return service
+        return [service]
 
     # Si no pasó service_id → devuelve todos
     return db.query(clinicModel.Services).all()
@@ -96,7 +96,7 @@ def get_clinics(clinic_id: Optional[int] = Query(None),
         )
         if not clinic:
             raise HTTPException(404, "Clinic not found")
-        return clinic
+        return [clinic]
 
     return db.query(clinicModel.Clinic).all()
 
@@ -236,7 +236,7 @@ def get_schedules(schedule_id: Optional[int] = Query(None) ,db: Session = Depend
 
         if not schedules:
             raise HTTPException(404, "Schedule not found")
-        return schedules
+        return [schedules]
 
     return db.query(Schedules).all()
 
