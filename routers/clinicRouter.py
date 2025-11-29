@@ -1,6 +1,6 @@
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from fastapi.params import Depends
 from sqlalchemy.orm import Session
 from starlette import status
@@ -25,7 +25,7 @@ def create_service(data: ServiceCreate, db: Session = Depends(get_db)):
 
 #OBTENER SERVICIOS
 @router.get("/service", response_model=list[ServiceResponse])
-def get_services(service_id = Optional[int], db: Session = Depends(get_db)):
+def get_services(service_id: Optional[int] = Query(None), db: Session = Depends(get_db)):
     if service_id is not None:
         service = (
             db.query(clinicModel.Services)
@@ -85,7 +85,8 @@ def create_clinic(request: ClinicCreate, db: Session = Depends(get_db)):
 
 #OBTENER CLINICA
 @router.get("", response_model=list[ClinicResponse])
-def get_clinics(clinic_id = Optional[int], db: Session = Depends(get_db)):
+def get_clinics(clinic_id: Optional[int] = Query(None),
+                db: Session = Depends(get_db)):
 
     if clinic_id is not None:
         clinic = (
@@ -173,7 +174,7 @@ def create_appointment(data: AppointmentCreate, db: Session = Depends(get_db)):
 
 #OBTENER CITA
 @router.get("/appointment", response_model=list[AppointmentBase])
-def get_appointments(appointment_id = Optional[int], db: Session = Depends(get_db)):
+def get_appointments(appointment_id: Optional[int] = Query(None), db: Session = Depends(get_db)):
 
     if appointment_id is not None:
         appointments = (
@@ -224,7 +225,7 @@ def create_schedule(data: SchedulesCreate, db: Session = Depends(get_db)):
 
 #OBTENER HORARIO
 @router.get("/schedules", response_model=list[SchedulesResponse])
-def get_schedules(schedule_id = Optional[int] ,db: Session = Depends(get_db)):
+def get_schedules(schedule_id: Optional[int] = Query(None) ,db: Session = Depends(get_db)):
 
     if schedule_id is not None:
         schedules = (
