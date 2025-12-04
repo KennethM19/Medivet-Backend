@@ -32,7 +32,7 @@ class DietScheduleCreate(DietScheduleBase):
     diet_id: int
 
 class DietScheduleUpdate(BaseModel):
-    time: time | None = None
+    time: Optional[time] = None
 
 class DietScheduleResponse(DietScheduleBase):
     id: int
@@ -111,7 +111,7 @@ class PrescriptionDoseUpdate(BaseModel):
     duration_days: Optional[int] = None
     first_dose: Optional[datetime] = None
     next_dose: Optional[datetime] = None
-    taken: bool | None = None
+    taken: Optional[bool] = None
 
 class PrescriptionDoseResponse(PrescriptionDoseBase):
     id: int
