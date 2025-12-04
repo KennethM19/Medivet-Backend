@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 
 from database import engine, Base
-from routers import usersRouter, authRouter, utilsRouter, petsRouter, medicalRecordRouter, chatRouter, clinicRouter
+from routers import usersRouter, authRouter, utilsRouter, petsRouter, medicalRecordRouter, chatRouter, clinicRouter, \
+    utilPetRouter
 
 Base.metadata.create_all(bind=engine)
 app = FastAPI(title="Medivet Backend")
@@ -13,6 +14,7 @@ app.include_router(utilsRouter.router)
 app.include_router(medicalRecordRouter.router)
 app.include_router(chatRouter.router)
 app.include_router(clinicRouter.router)
+app.include_router(utilPetRouter.router)
 
 @app.get("/")
 def home():
