@@ -48,8 +48,7 @@ class Pets(Base):
     user = relationship('Users', back_populates='pets')
     sex = relationship('Sex', back_populates='pets')
     appointments = relationship('Appointment', back_populates='pets')
-    vaccines = relationship(
-        "PetVaccine",
-        back_populates="pet",
-        cascade="all, delete-orphan"
-    )
+    vaccines = relationship("PetVaccine", back_populates="pet", cascade="all, delete-orphan")
+    diets = relationship("Diet", back_populates="pet")
+    activities = relationship("Activity", back_populates="pet")
+    prescriptions = relationship("Prescription", back_populates="pet")
