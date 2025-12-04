@@ -8,7 +8,7 @@ from models.utilPetsModel import Diet, DietSchedule, Activity, Prescription, Pre
 from schemes.utilPetSchemes import DietResponse, DietCreate, DietUpdate, DietScheduleResponse, DietScheduleCreate, \
     DietScheduleUpdate, ActivityResponse, ActivityCreate, PrescriptionResponse, PrescriptionCreate, PrescriptionUpdate, \
     PrescriptionDoseResponse, PrescriptionDoseCreate, PrescriptionDoseUpdate, NotificationResponse, NotificationCreate, \
-    NotificationUpdate
+    NotificationUpdate, ActivityUpdate
 
 router = APIRouter(
     prefix="/utilPet",
