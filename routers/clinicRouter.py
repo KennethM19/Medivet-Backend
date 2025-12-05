@@ -185,7 +185,7 @@ def get_appointments(appointment_id: Optional[int] = Query(None), db: Session = 
 
         if not appointments:
             raise HTTPException(404, "Appointment not found")
-        return appointments
+        return [appointments]
 
     return db.query(Appointment).all()
 
