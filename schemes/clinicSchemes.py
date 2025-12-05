@@ -58,6 +58,7 @@ class AppointmentBase(BaseModel):
     clinic_id: int
     service_id: int
     status_id: int
+    pet_id:int
 
 class AppointmentCreate(AppointmentBase):
     pass
